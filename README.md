@@ -1,19 +1,19 @@
-# katz-lab
+Katz Lab package provides a collection of tools for running experiments with QM controllers and for analyzing the resulting data.
 
-The Katz lab is a research group at the Hebrew University of Jerusalem, headed by Prof. Yair Katz.
+Version: 0.1.0 Author: Asaf Solonnikov
 
-THis Pyhton package is a collection of tools for running experiments and analyzing data with QM.
+Installation
 
-Version: 0.1.0
+I strongly recommend using SSH keys (create a local SSH key if you want to work on your personal computer and add it to your GitHub account).
 
-Author: Asaf Solonnikov
+Clone the repository:
 
-Installation:
+git clone git@github.com:asafasia/katz-lab.git
 
-1. git clone: https://github.com/AsafSolonnikov/katz-lab.git
+Enter the project directory:
 
-2. cd katz-lab
+cd katz-lab
 
-3. pip install -e .
+Install in editable mode:
 
-
+pip install -e .
