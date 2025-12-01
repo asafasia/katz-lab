@@ -26,7 +26,8 @@ class BaseExperiment(ABC):
         self.qubit_params = args[qubit]["qubit"]
 
         if qmm is None:
-            qmm = QuantumMachinesManager(host=qm_host)
+            # qmm = QuantumMachinesManager(host=qm_host)
+            qmm = QuantumMachinesManager()
 
         if config is None:
             config = load_config(options)

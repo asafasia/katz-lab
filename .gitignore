@@ -5,3 +5,7 @@ src/katz_lab/__pycache__/__init__.cpython-311.pyc
 src/katz_lab/utils/__pycache__/configuration.cpython-311.pyc
 src/katz_lab.egg-info/PKG-INFO
 src/katz_lab.egg-info/SOURCES.txt
+src/katz_lab/library/__pycache__/pulses.cpython-311.pyc
+src/katz_lab/utils/__pycache__/helper_functions.cpython-311.pyc
+src/katz_lab/utils/__pycache__/macros.cpython-311.pyc
+src/katz_lab/utils/__pycache__/options.cpython-311.pyc
