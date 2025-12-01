@@ -1,9 +1,11 @@
 from pathlib import Path
+import katz_lab
+
 import json
 
-ROOT = Path.home()
+# ROOT = Path.home()
 
-KATZ_LAB_PATH = ROOT / "Developer" / "katz-lab" / "src" / "katz_lab"
+KATZ_LAB_PATH = Path(katz_lab.__file__).resolve().parent
 
 ARGS_PATH = KATZ_LAB_PATH / "data" / "params" / "params.json"
 

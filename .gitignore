@@ -1,0 +1,7 @@
+.DS_Store
+src/katz_lab/experiments/__pycache__/base_experiment.cpython-311.pyc
+src/katz_lab/utils/__pycache__/config.cpython-311.pyc
+src/katz_lab/__pycache__/__init__.cpython-311.pyc
+src/katz_lab/utils/__pycache__/configuration.cpython-311.pyc
+src/katz_lab.egg-info/PKG-INFO
+src/katz_lab.egg-info/SOURCES.txt
