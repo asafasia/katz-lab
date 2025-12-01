@@ -1,0 +1,11 @@
+Metadata-Version: 2.4
+Name: katz-lab
+Version: 0.1.0
+Summary: Short description
+Author-email: Your Name <you@example.com>
+License-Expression: MIT
+Project-URL: Source, https://github.com/you/your_package
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown
+
+# katz-lab

@@ -1,0 +1,21 @@
+[project]
+name = "katz-lab"
+version = "0.1.0"
+description = "Short description"
+readme = "README.md"
+authors = [
+    { name="Your Name", email="you@example.com" }
+]
+license = "MIT"
+requires-python = ">=3.8"
+dependencies = []
+
+[project.urls]
+Source = "https://github.com/you/your_package"
+
+[build-system]
+requires = ["setuptools>=65", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
