@@ -14,3 +14,5 @@ class Options:
     active_reset: bool = False
     active_reset_n: int = 2
     pulse_type: str = "gaussian"
+    readout_method: str = "simple"
+    

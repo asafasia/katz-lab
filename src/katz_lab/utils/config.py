@@ -5,11 +5,11 @@ ROOT = Path.home()
 
 KATZ_LAB_PATH = ROOT / "Developer" / "katz-lab" / "src" / "katz_lab"
 
-ARGS_PATH = KATZ_LAB_PATH / "data" / "params" / "args_ariel.json"
+ARGS_PATH = KATZ_LAB_PATH / "data" / "params" / "params.json"
 
 OPTIMAL_WEIGHTS_PATH = KATZ_LAB_PATH / "data" / "kernel_traces" / "optimal_weights.npz"
 
-qubit = "qubit10"
+qubit = "q10"
 
 
 sa_address = "TCPIP0::192.168.43.100::inst0::INSTR"

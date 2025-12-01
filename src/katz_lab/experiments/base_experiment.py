@@ -10,6 +10,7 @@ from katz_lab.utils.configuration import (
 )
 
 from katz_lab.utils.options import Options
+from katz_lab.utils.configuration import *
 
 
 class BaseExperiment(ABC):
@@ -22,7 +23,8 @@ class BaseExperiment(ABC):
     ):
 
         self.qubit = qubit
-        self.
+        self.qubit_params = args[qubit]["qubit"]
+        
         if qmm is None:
             qmm = QuantumMachinesManager(host=qm_host)
 

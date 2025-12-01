@@ -1,5 +1,5 @@
 {
-    "qubit10": {
+    "q10": {
         "qubit": {
             "IQ_input": {
                 "I": 3,
@@ -53,7 +53,7 @@
             },
             "saturation_pulse": {
                 "length": 100000,
-                "amplitude": 0.401
+                "amplitude": 0.0401
             },
             "T1": 45000.0,
             "T2": 12500.03,

@@ -5,7 +5,7 @@ from qm.qua import *
 from qm import QuantumMachinesManager
 from qualang_tools.results import fetching_tool, progress_counter
 
-from katz_lab.macros.macros import readout_macro_mahalabonis, qubit_initialization
+from katz_lab.utils.macros import readout_macro_mahalabonis, qubit_initialization
 
 from katz_lab.experiments.base_experiment import BaseExperiment, Options
 
@@ -77,7 +77,6 @@ class IQBlobsExperiment(BaseExperiment):
 
     def execute_program(self):
         # Set qubit bias
-        # DC.set_voltage(qubit_flux_bias_channel, flux_bias)
         qm = self.qmm.open_qm(self.config)
         job = qm.execute(self.program)
         results = fetching_tool(
@@ -92,17 +91,20 @@ class IQBlobsExperiment(BaseExperiment):
                 iteration, self.options.n_avg, start_time=results.get_start_time()
             )
 
-        # DC.set_voltage(qubit_flux_bias_channel, 0)
-
         # Convert to numpy arrays
-        self.I_g = np.array(I_g)
-        self.Q_g = np.array(Q_g)
-        self.I_e = np.array(I_e)
-        self.Q_e = np.array(Q_e)
-        self.state_g = np.array(state_g)
-        self.state_e = np.array(state_e)
 
-        return self.I_g, self.Q_g, self.I_e, self.Q_e, self.state_g, self.state_e
+        results = dict()
+        results["I_g"] = np.array(I_g)
+        results["Q_g"] = np.array(Q_g)
+        results["I_e"] = np.array(I_e)
+        results["Q_e"] = np.array(Q_e)
+        results["state_g"] = np.array(state_g)
+        results["state_e"] = np.array(state_e)
+
+        self.results = results
+
+        return results
+
 
     def analyze_results(self):
         pass
@@ -135,12 +137,12 @@ class IQBlobsExperiment(BaseExperiment):
         plt.figure(figsize=(12, 6))
 
         plt.subplot(1, 2, 1)
-        plt.plot(self.I_g, self.Q_g, ".", label="ground", color="C00", alpha=0.5)
-        plt.plot(self.I_e, self.Q_e, ".", label="excited", color="C03", alpha=0.2)
+        plt.scatter(self.results["I_g"], self.results["Q_g"], label="ground", color="C00", alpha=0.5)
+        plt.scatter(self.results["I_e"], self.results["Q_e"], label="excited", color="C03", alpha=0.2)
 
         plt.subplot(1, 2, 2)
-        plt.hist(self.I_g, bins=50, alpha=0.5, label="ground")
-        plt.hist(self.I_e, bins=50, alpha=0.5, label="excited")
+        plt.hist(self.results["I_g"], bins=50, alpha=0.5, label="ground")
+        plt.hist(self.results["I_e"], bins=50, alpha=0.5, label="excited")
 
         plt.xlabel("I")
         plt.ylabel("Q")
