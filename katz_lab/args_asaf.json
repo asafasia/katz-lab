@@ -1,0 +1,93 @@
+{
+    "qubit4": {
+        "qubit": {
+            "IQ_input": {
+                "I": 3,
+                "Q": 4
+            },
+            "IQ_bias": {
+                "I": -0.008200852794855662,
+                "Q": -0.07215767091244367
+            },
+            "qubit_correction_matrix": [
+                0.9752669321426365,
+                0.14889559244992015,
+                0.13346014544499799,
+                1.0880622613890345
+            ],
+            "qubit_LO": 4500000000.0,
+            "qubit_freq": 4404452162,
+            "reset_gate_len": 40,
+            "reset_gate_amp": 0.0652154995580671,
+            "square180_len": 40,
+            "square180_amp": 0.06526128797704671,
+            "square90_amp": 0.03265693781929573,
+            "square_pi_len_ef": 40,
+            "square_pi_amp_ef": 0.06,
+            "square_pi_len_gf": 100,
+            "square_pi_amp_gf": 0.082,
+            "drag_len": 20,
+            "drag180_amp": 0.3033366543483098,
+            "drag90_amp": 0.1504583684412139,
+            "drag_coef": 0.3971504,
+            "saturation_length": 100000,
+            "saturation_amplitude": 0.401,
+            "qubit_anharmonicity": -234797350,
+            "T1": 45000.0,
+            "T2": 12500.03,
+            "thermalization_time": 300000
+        },
+        "resonator": {
+            "IQ_input": {
+                "I": 1,
+                "Q": 2
+            },
+            "IQ_bias": {
+                "I": -0.05427802916226249,
+                "Q": 0.06232625670450799
+            },
+            "resonator_correction_matrix": [
+                1.2918405112440356,
+                0.101956194989812,
+                0.1557692726285196,
+                0.8455527899539057
+            ],
+            "resonator_LO": 7610000000.0,
+            "resonator_freq": 7585532980.0,
+            "readout_pulse_length": 2000,
+            "readout_pulse_amplitude": 0.061,
+            "time_of_flight": 340,
+            "smearing": 0,
+            "rotation_angle": 481.0001669456906,
+            "threshold": 0.0026463472435906653,
+            "fidelity_matrix": [
+                [
+                    0.9025,
+                    0.0975
+                ],
+                [
+                    0.0723,
+                    0.9277
+                ]
+            ],
+            "gef_centers": [
+                [
+                    0.001177676022052765,
+                    -0.004580473527312279
+                ],
+                [
+                    0.005541767925024033,
+                    -0.004596376791596413
+                ],
+                [
+                    0.006904274225234985,
+                    -0.0019030384719371796
+                ]
+            ]
+        },
+        "else": {
+            "const_length": 1000,
+            "const_amplitude": 0.01
+        }
+    }
+}
