@@ -2,41 +2,19 @@ import json
 from qualang_tools.units import unit
 from library.pulses import *
 from qualang_tools.config.waveform_tools import drag_gaussian_pulse_waveforms
-
-
-args_path = "C:/Users/owner/Janis Lab Code repos/Guy/janis-lab-opx+/experiment_utils/"
-optimal_weights_path = "C:/Users/owner/Janis Lab Code repos/Guy/janis-lab-opx+/experiment_utils/optimal_weights.npz"
-import numpy as np
-
-user = "Ariel"
-
-args_path = (
-    f"C:/Users/owner/Janis Lab Code repos/{user}/janis-lab-opx+/experiment_utils/"
-)
-optimal_weights_path = f"C:/Users/owner/Janis Lab Code repos/{user}/janis-lab-opx+/experiment_utils/optimal_weights.npz"
-if user == "Asaf":
-    args_path += "args_asaf.json"
-elif user == "Ariel":
-    args_path += "args_ariel.json"
-elif user == "Guy":
-    args_path += "args_guy.json"
-elif user == "Harel":
-    args_path += "args_harel.json"
+from katz_lab.utils.config import *
+from katz_lab.utils.helper_functions import IQ_imbalance
 
 
 u = unit(coerce_to_integer=True)
 
 
-
 con = "con1"
-qubit = "qubit10"
 #############################################
 #                  Qubits                   #
 #############################################
-qubit_args = args[qubit]["qubit"]
 
 qubit_anharmonicity = qubit_args["qubit_anharmonicity"]
-
 
 qubit_LO = qubit_args["qubit_LO"]
 
@@ -67,25 +45,25 @@ qubit_correction_matrix = IQ_imbalance(mixer_qubit_g, mixer_qubit_phi)
 qubit_T1 = qubit_args["T1"]
 thermalization_time = qubit_args["thermalization_time"]
 # Saturation_pulse
-saturation_len = qubit_args["saturation_length"]
-saturation_amp = qubit_args["saturation_amplitude"]
+saturation_len = qubit_args["saturation_pulse"]["length"]
+saturation_amp = qubit_args["saturation_pulse"]["amplitude"]
 # Square pi pulse
-square180_len = qubit_args["square180_len"]
-square180_amp = qubit_args["square180_amp"]
-square90_len = qubit_args["square180_len"]
-square90_amp = qubit_args["square90_amp"]
+square180_len = qubit_args["square_gate"]["length"]
+square180_amp = qubit_args["square_gate"]["amplitude_180"]
+square90_len = qubit_args["square_gate"]["length"]
+square90_amp = qubit_args["square_gate"]["amplitude_90"]
 # reset_gate
-reset_gate_len = qubit_args["reset_gate_len"]
-reset_gate_amp = qubit_args["reset_gate_amp"]
+reset_gate_len = qubit_args["reset_gate"]["length"]
+reset_gate_amp = qubit_args["reset_gate"]["amplitude"]
 # Square pi pulse ef
-square_pi_len_ef = qubit_args["square_pi_len_ef"]
-square_pi_amp_ef = qubit_args["square_pi_amp_ef"]
+square_pi_len_ef = qubit_args["square_gate"]["length_ef"]
+square_pi_amp_ef = qubit_args["square_gate"]["amplitude_180_ef"]
 # Square pi pulse gf
-square_pi_len_gf = qubit_args["square_pi_len_gf"]
-square_pi_amp_gf = qubit_args["square_pi_amp_gf"]
+square_pi_len_gf = qubit_args["square_gate"]["length_gf"]
+square_pi_amp_gf = qubit_args["square_gate"]["amplitude_180_gf"]
 
 # Drag pulses
-drag_coef = qubit_args["drag_coef"]
+drag_coef = qubit_args["drag_gate"]["drag_coef"]
 anharmonicity = -qubit_anharmonicity
 AC_stark_detuning = 0 * u.MHz
 
@@ -168,9 +146,9 @@ if pulse_type == "drag":
     minus_y90_I_wf = (-1) * minus_y90_der_wf
     minus_y90_Q_wf = minus_y90_wf
 if pulse_type == "square":
-    x180_len = qubit_args["square180_len"]
-    x180_amp = qubit_args["square180_amp"]
-    x90_amp = qubit_args["square90_amp"]
+    x180_len = qubit_args["square_gate"]["length"]
+    x180_amp = qubit_args["square_gate"]["amplitude_180"]
+    x90_amp = qubit_args["square_gate"]["amplitude_90"]
     pulse_vec = x180_amp * np.ones(x180_len)
     x180_I_wf = pulse_vec
     x180_Q_wf = pulse_vec * 0
@@ -232,7 +210,7 @@ if opt_weights:
         convert_integration_weights,
     )
 
-    weights = np.load(optimal_weights_path)
+    weights = np.load(OPTIMAL_WEIGHTS_PATH)
     opt_weights_real = convert_integration_weights(weights["weights_real"])
     opt_weights_minus_imag = convert_integration_weights(weights["weights_minus_imag"])
     opt_weights_imag = convert_integration_weights(weights["weights_imag"])

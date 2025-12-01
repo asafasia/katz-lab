@@ -210,7 +210,7 @@ if __name__ == "__main__":
     qubit = "q10"
     options = OptionsQubitSpectroscopy()
 
-    qubit_LO = 5.5e9
+    qubit_LO = 
     center = 0
     span = 100e6
     N = 100
