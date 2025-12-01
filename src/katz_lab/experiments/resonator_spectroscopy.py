@@ -1,14 +1,16 @@
 import numpy as np
+from scipy import signal
+import matplotlib.pyplot as plt
+
+
 from qm.qua import *
 from qm import QuantumMachinesManager
 from qualang_tools.results import progress_counter, fetching_tool
 from qualang_tools.loops import from_array
 
-from utils.configuration import *
-from experiments.base_experiment import Options
-import matplotlib.pyplot as plt
 
-from experiments.base_experiment import BaseExperiment
+from katz_lab.utils.configuration import *
+from katz_lab.experiments.base_experiment import BaseExperiment, Options
 
 
 class OptionsResonatorSpectroscopy(Options):
@@ -23,13 +25,12 @@ class ResonatorSpectroscopy(BaseExperiment):
         frequencies: np.ndarray,
         options: OptionsResonatorSpectroscopy,
         config: dict,
+        qmm: QuantumMachinesManager = None,
     ):
-        self.frequencies = frequencies
-        self.options = options
         self.qubit = qubit
-        self.config = config
+        self.frequencies = frequencies
 
-        super().__init__(options=options, config=config, qmm=None)
+        super().__init__(options=options, config=config, qmm=qmm)
 
     def define_program(self):
         with program() as resonator_spec:
@@ -108,15 +109,12 @@ class ResonatorSpectroscopy(BaseExperiment):
                 )
                 n_st.save("iteration")
 
-    def run(self):
-        self.define_program()
+    def execute_program(self):
+        data_list = ["I1", "Q1", "I2", "Q2", "iteration"]
 
-        config = self.config
-        qm = qmm.open_qm(config)
+        qm = self.qmm.open_qm(self.config)
         job = qm.execute(self.program)
-        self.results = fetching_tool(
-            job, data_list=["I1", "Q1", "I2", "Q2", "iteration"], mode="live"
-        )
+        self.results = fetching_tool(job, data_list=data_list, mode="live")
 
         while self.results.is_processing():
             I1, Q1, I2, Q2, iteration = self.results.fetch_all()
@@ -149,7 +147,38 @@ class ResonatorSpectroscopy(BaseExperiment):
                 iteration, self.options.n_avg, start_time=self.results.get_start_time()
             )
 
+        results = dict()
+
+        results["frequencies"] = self.frequencies
+        results["R1"] = R1
+        results["R2"] = R2
+        results["phase1"] = phase1
+        results["phase2"] = phase2
+        results["Var"] = Var
+        results["VarS"] = VarS
+        results["S1"] = S1
+        results["S2"] = S2
+
+        self.results = results
+        return results
+
+    def analyze_results(self):
+        pass
+
+    def save_results(self):
+        pass
+
+    def plot_results(self):
         fig = plt.figure()
+
+        S1 = self.results["S1"]
+        S2 = self.results["S2"] 
+        R1 = self.results["R1"]
+        R2 = self.results["R2"]
+        phase1 = self.results["phase1"]
+        phase2 = self.results["phase2"]
+        VarS = self.results["VarS"]
+        frequencies = self.results["frequencies"]
         diff = np.abs(S1 - S2) / VarS
         # diff = np.abs(R1 - R2)/Var
         # diff = np.abs(phase1 - phase2)/np.pi/2
@@ -200,30 +229,23 @@ class ResonatorSpectroscopy(BaseExperiment):
         plt.tight_layout()
         plt.show()
 
-    def plot(self):
-        pass
-
 
 if __name__ == "__main__":
 
     qubit = "q10"
+    options = OptionsResonatorSpectroscopy()
 
     span = 4 * u.MHz
     f_min = resonator_freq - span / 2
     f_max = resonator_freq + span / 2
-    df = 20 * u.kHz
+    df = 200 * u.kHz
 
     frequencies = resonator_LO - np.arange(f_min, f_max + 0.1, df)
 
-    options = OptionsResonatorSpectroscopy()
-
-    options.n_avg = 100
-
-    qmm = QuantumMachinesManager(host=qm_host)
-
-    experiment = ResonatorSpectroscopy(frequencies, options, qubit)
+    experiment = ResonatorSpectroscopy(
+        qubit=qubit, frequencies=frequencies, options=options, config=config
+    )
 
     experiment.run()
 
     print(experiment.results)
-
