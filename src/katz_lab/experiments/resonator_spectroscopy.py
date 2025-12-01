@@ -1,48 +1,26 @@
-"""
-        RESONATOR SPECTROSCOPY
-This sequence involves measuring the resonator by sending a readout pulse and demodulating the signals to extract the
-'I' and 'Q' quadratures across varying readout intermediate frequencies.
-The data is then post-processed to determine the resonator resonance frequency.
-This frequency can be used to update the readout intermediate frequency in the configuration under "resonator_IF".
-
-Prerequisites:
-    - Ensure calibration of the time of flight, offsets, and gains (referenced as "time_of_flight").
-    - Calibrate the IQ mixer connected to the readout line (whether it's an external mixer or an Octave port).
-    - Define the readout pulse amplitude and duration in the configuration.
-    - Specify the expected resonator depletion time in the configuration.
-
-Before proceeding to the next node:
-    - Update the readout frequency, labeled as "resonator_IF", in the configuration.
-"""
-
 import numpy as np
 from qm.qua import *
 from qm import QuantumMachinesManager
-from qm import SimulationConfig
-
-import DC
 from qualang_tools.results import progress_counter, fetching_tool
 from qualang_tools.loops import from_array
-import matplotlib.pyplot as plt
-from scipy import signal
 
 from configuration import *
-from utils.options import Options
-
-
-###################
-# The QUA program #
-###################
+from experiments.base_experiment import Options
+import matplotlib.pyplot as plt
 
 
 class OptionsResonatorSpectroscopy(Options):
     long_pulse: bool = False
-    discriminate_ef: bool = False  # long_pulse has to be False
+    discriminate_ef: bool = False
 
 
-class ResonatorSpectroscopy:
+class ResonatorSpectroscopy(BaseExperiment):
     def __init__(
-        self, frequencies: np.ndarray, options: OptionsResonatorSpectroscopy, qubit: str
+        self,
+        qubit: str,
+        frequencies: np.ndarray,
+        options: OptionsResonatorSpectroscopy,
+        config: dict,
     ):
         self.frequencies = frequencies
         self.options = options
@@ -136,8 +114,90 @@ class ResonatorSpectroscopy:
             job, data_list=["I1", "Q1", "I2", "Q2", "iteration"], mode="live"
         )
 
+        while self.results.is_processing():
+            I1, Q1, I2, Q2, iteration = self.results.fetch_all()
+
+            S1 = u.demod2volts(I1 + 1j * Q1, readout_len)
+            S2 = u.demod2volts(I2 + 1j * Q2, readout_len)
+            R1 = np.abs(S1)  # Amplitude
+            R2 = np.abs(S2)  # Amplitude
+
+            R1_var = np.var(R1, axis=0)
+            R2_var = np.var(R2, axis=0)
+
+            Var = np.sqrt(R1_var / 2 + R2_var / 2)
+
+            R1 = np.mean(R1, axis=0)
+            R2 = np.mean(R2, axis=0)
+
+            phase1 = np.angle(S1)  # Phase
+            phase2 = np.angle(S2)  # Phase
+
+            phase1 = signal.detrend(np.unwrap(phase1))
+            phase2 = signal.detrend(np.unwrap(phase2))
+            phase1 = np.mean(phase1, axis=0)
+            phase2 = np.mean(phase2, axis=0)
+            #
+            S1 = np.mean(S1, axis=0)
+            S2 = np.mean(S2, axis=0)
+            VarS = np.sqrt(np.abs(np.var(S1) / 2 + np.var(S2) / 2))
+            progress_counter(
+                iteration, self.options.n_avg, start_time=self.results.get_start_time()
+            )
+
+        fig = plt.figure()
+        diff = np.abs(S1 - S2) / VarS
+        # diff = np.abs(R1 - R2)/Var
+        # diff = np.abs(phase1 - phase2)/np.pi/2
+
+        res_freq = frequencies[np.argmax(diff)]
+        print("Resonator  freq is: ", (resonator_LO - res_freq) / 1e6, "MHz")
+
+        plt.suptitle(
+            f"Resonator spectroscopy - LO = {resonator_LO / u.GHz} GHz "
+            f"\nRESONATOR : pulse amplitude = {readout_amp} , "
+            f" length = {readout_len / 1e3} us"
+            f"\n QUBIT : pulse amplitude = {saturation_amp}, length = {saturation_len / 1e3} us"
+        )
+        plt.subplot(311)
+        plt.axvline(x=(resonator_LO - res_freq) / u.MHz, color="r", linestyle="--")
+        plt.axvline(x=resonator_freq / u.MHz, color="g", linestyle="--")
+        plt.plot((resonator_LO - frequencies) / u.MHz, R1, label="Without Drive")
+        plt.plot((resonator_LO - frequencies) / u.MHz, R2, label="With Drive")
+        plt.legend()
+        #
+        plt.ylim([0, max(R1) * 1.2])
+
+        plt.ylabel(r"$R=\sqrt{I^2 + Q^2}$ [V]")
+        plt.subplot(312)
+        plt.plot((resonator_LO - frequencies) / u.MHz, phase1, label="Without Drive")
+        plt.plot((resonator_LO - frequencies) / u.MHz, phase2, label="With Drive")
+
+        # plt.ylim([-np.pi / 2, np.pi / 2])
+        plt.xlabel("Intermediate frequency [MHz]")
+        plt.ylabel("Phase [rad]")
+        plt.legend()
+        plt.subplot(313)
+        plt.ylabel("Diff ")
+        plt.plot((resonator_LO - frequencies) / u.MHz, diff)
+        plt.axvline(
+            x=(resonator_LO - res_freq) / u.MHz,
+            color="r",
+            linestyle="--",
+            label=f"new freq = {(resonator_LO - res_freq) / u.MHz} MHz",
+        )
+        plt.axvline(
+            x=resonator_freq / u.MHz,
+            color="g",
+            linestyle="--",
+            label=f"old freq = {(resonator_freq) / u.MHz} MHz",
+        )
+        plt.legend()
+        plt.tight_layout()
+        plt.show()
+
     def plot(self):
-        self.results.plot("I1", "Q1", "I2", "Q2", "iteration")
+        pass
 
 
 if __name__ == "__main__":
@@ -148,6 +208,7 @@ if __name__ == "__main__":
     f_min = resonator_freq - span / 2
     f_max = resonator_freq + span / 2
     df = 20 * u.kHz
+    DC.set_voltage(qubit_flux_bias_channel, flux_bias)  # Set the flux bias voltage
 
     frequencies = resonator_LO - np.arange(f_min, f_max + 0.1, df)
 
@@ -160,6 +221,7 @@ if __name__ == "__main__":
     experiment = ResonatorSpectroscopy(frequencies, options, qubit)
 
     experiment.run()
-    
 
-    experiment.results
+    print(experiment.results)
+
+    DC.set_voltage(qubit_flux_bias_channel, 0)  # Set the flux bias voltage
