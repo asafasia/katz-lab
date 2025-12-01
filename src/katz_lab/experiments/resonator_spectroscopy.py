@@ -4,9 +4,11 @@ from qm import QuantumMachinesManager
 from qualang_tools.results import progress_counter, fetching_tool
 from qualang_tools.loops import from_array
 
-from configuration import *
+from utils.configuration import *
 from experiments.base_experiment import Options
 import matplotlib.pyplot as plt
+
+from experiments.base_experiment import BaseExperiment
 
 
 class OptionsResonatorSpectroscopy(Options):
@@ -26,6 +28,8 @@ class ResonatorSpectroscopy(BaseExperiment):
         self.options = options
         self.qubit = qubit
         self.config = config
+
+        super().__init__(options=options, config=config, qmm=None)
 
     def define_program(self):
         with program() as resonator_spec:
@@ -208,7 +212,6 @@ if __name__ == "__main__":
     f_min = resonator_freq - span / 2
     f_max = resonator_freq + span / 2
     df = 20 * u.kHz
-    DC.set_voltage(qubit_flux_bias_channel, flux_bias)  # Set the flux bias voltage
 
     frequencies = resonator_LO - np.arange(f_min, f_max + 0.1, df)
 
@@ -224,4 +227,3 @@ if __name__ == "__main__":
 
     print(experiment.results)
 
-    DC.set_voltage(qubit_flux_bias_channel, 0)  # Set the flux bias voltage

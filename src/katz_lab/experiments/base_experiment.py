@@ -2,6 +2,9 @@ from dataclasses import dataclass
 from abc import ABC, abstractmethod
 from qm import QuantumMachinesManager, SimulationConfig
 
+from utils import DC
+from utils.configuration import qubit_flux_bias_channel
+
 
 @dataclass
 class Options:
@@ -40,7 +43,14 @@ class BaseExperiment(ABC):
         raise NotImplementedError
 
     def run(self):
+        self.define_program()
+
+        DC.set_voltage(qubit_flux_bias_channel, flux_bias)  # Set the flux bias voltage
+
         self.execute_program()
+
+        DC.set_voltage(qubit_flux_bias_channel, 0)  # Set the flux bias voltage
+
         self.analyze_results()
         if self.options.plot:
             self.plot_results()
