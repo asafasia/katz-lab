@@ -155,7 +155,7 @@ class IQBlobsExperiment(BaseExperiment):
 if __name__ == "__main__":
     qubit = "q10"
     options = OptionsIQBlobs()
-    options.n_avg = 10000
+    options.n_avg = 20000
     experiment = IQBlobsExperiment(
         qubit=qubit,
         options=options,
