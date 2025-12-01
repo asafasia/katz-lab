@@ -1,9 +1,12 @@
 import json
 from qualang_tools.units import unit
-from library.pulses import *
-from qualang_tools.config.waveform_tools import drag_gaussian_pulse_waveforms
+from qualang_tools.config.waveform_tools import (
+    drag_gaussian_pulse_waveforms,
+)
 from katz_lab.utils.config import *
 from katz_lab.utils.helper_functions import IQ_imbalance
+from katz_lab.library.pulses import generate_gaussian_pulse
+import numpy as np
 
 
 u = unit(coerce_to_integer=True)
@@ -292,7 +295,6 @@ config = {
                 "y360": "y360_pulse",
                 "rampup": "rampup_pulse",
                 "rampdown": "rampdown_pulse",
-                "gaussian": "gaussian_pulse",
             },
         },
         "qubit_ef": {
@@ -369,7 +371,7 @@ config = {
         },
         "square_pi_pulse": {
             "operation": "control",
-            "length": reset_gate_len,
+            "length": square180_len,
             "waveforms": {
                 "I": "square_pi_wf",
                 "Q": "zero_wf",
@@ -387,14 +389,6 @@ config = {
             "operation": "control",
             "length": saturation_len,
             "waveforms": {"I": "saturation_drive_wf", "Q": "zero_wf"},
-        },
-        "gaussian_pulse": {
-            "operation": "control",
-            "length": saturation_len,
-            "waveforms": {
-                "I": "I_gaussian_wf",
-                "Q": "Q_gaussian_wf",
-            },
         },
         "x180_pulse": {
             "operation": "control",

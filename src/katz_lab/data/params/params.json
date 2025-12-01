@@ -16,7 +16,7 @@
                 1.0220001243597812
             ],
             "qubit_LO": 4500000000,
-            "qubit_ge_freq": 4414766205,
+            "qubit_ge_freq": 4487766205,
             "qubit_ef_freq": 4214766205,
             "qubit_anharmonicity": -232349980,
             "sweet_spot_flag": 1,
@@ -52,7 +52,7 @@
                 "drag_coef": 0.3971504
             },
             "saturation_pulse": {
-                "length": 100000,
+                "length": 10000,
                 "amplitude": 0.0401
             },
             "T1": 45000.0,
@@ -75,7 +75,7 @@
                 0.888500008293417
             ],
             "resonator_LO": 7610000000.0,
-            "resonator_freq": 7467846608.0,
+            "resonator_freq": 7446346608.0,
             "readout_pulse_length": 1000,
             "readout_pulse_amplitude": 0.121,
             "time_of_flight": 340,

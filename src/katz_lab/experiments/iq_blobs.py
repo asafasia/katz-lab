@@ -40,19 +40,15 @@ class IQBlobsExperiment(BaseExperiment):
                 state_g, I_g, Q_g = readout_macro_mahalabonis()
                 qubit_initialization(
                     self.options.active_reset,
-                    three_state=False,
-                    n=self.options.active_reset_n,
                 )
 
                 # Excited state measurement
                 align()
-                play("x180", "qubit")
-                align("qubit", "resonator", "qubit_ef")
+                play("saturation", "qubit")
+                align("qubit", "resonator")
                 state_e, I_e, Q_e = readout_macro_mahalabonis()
                 qubit_initialization(
                     self.options.active_reset,
-                    three_state=False,
-                    n=self.options.active_reset_n,
                 )
 
                 # Save streams
@@ -105,7 +101,6 @@ class IQBlobsExperiment(BaseExperiment):
 
         return results
 
-
     def analyze_results(self):
         pass
         # IQ discrimination
@@ -137,8 +132,20 @@ class IQBlobsExperiment(BaseExperiment):
         plt.figure(figsize=(12, 6))
 
         plt.subplot(1, 2, 1)
-        plt.scatter(self.results["I_g"], self.results["Q_g"], label="ground", color="C00", alpha=0.5)
-        plt.scatter(self.results["I_e"], self.results["Q_e"], label="excited", color="C03", alpha=0.2)
+        plt.scatter(
+            self.results["I_g"],
+            self.results["Q_g"],
+            label="ground",
+            color="C00",
+            alpha=0.5,
+        )
+        plt.scatter(
+            self.results["I_e"],
+            self.results["Q_e"],
+            label="excited",
+            color="C03",
+            alpha=0.2,
+        )
 
         plt.subplot(1, 2, 2)
         plt.hist(self.results["I_g"], bins=50, alpha=0.5, label="ground")

@@ -1,9 +1,9 @@
-
 """
 This file contains useful QUA macros meant to simplify and ease QUA programs.
 All the macros below have been written and tested with the basic configuration. If you modify this configuration
 (elements, operations, integration weights...) these macros will need to be modified accordingly.
 """
+
 from pyarrow import duration
 from qm.qua import *
 from scipy import optimize
@@ -129,19 +129,17 @@ def readout_macro():
             "readout",
             "resonator",
             None,
-            dual_demod.full('opt_cos', 'out1', 'opt_sin', 'out2', I),
-            dual_demod.full('opt_minus_sin', 'out1', 'opt_cos', 'out2', Q)
+            dual_demod.full("opt_cos", "out1", "opt_sin", "out2", I),
+            dual_demod.full("opt_minus_sin", "out1", "opt_cos", "out2", Q),
         )
-
-
 
     else:
         measure(
             "readout",
             "resonator",
             None,
-            dual_demod.full('cos', 'out1', 'sin', 'out2', I),
-            dual_demod.full('minus_sin', 'out1', 'cos', 'out2', Q)
+            dual_demod.full("cos", "out1", "sin", "out2", I),
+            dual_demod.full("minus_sin", "out1", "cos", "out2", Q),
         )
 
     assign(state, I > ge_threshold)
@@ -158,20 +156,18 @@ def readout_macro_two_state():
             "readout",
             "resonator",
             None,
-            dual_demod.full('opt_cos', 'out1', 'opt_sin', 'out2', I),
-            dual_demod.full('opt_minus_sin', 'out1', 'opt_cos', 'out2', Q)
+            dual_demod.full("opt_cos", "out1", "opt_sin", "out2", I),
+            dual_demod.full("opt_minus_sin", "out1", "opt_cos", "out2", Q),
         )
-
 
     else:
         measure(
             "readout",
             "resonator",
             None,
-            dual_demod.full('cos', 'out1', 'sin', 'out2', I),
-            dual_demod.full('minus_sin', 'out1', 'cos', 'out2', Q)
+            dual_demod.full("cos", "out1", "sin", "out2", I),
+            dual_demod.full("minus_sin", "out1", "cos", "out2", Q),
         )
-
 
     c0, c1, c2 = gef_centers
 
@@ -187,6 +183,7 @@ def readout_macro_two_state():
         assign(state, 1)
     return state, I, Q
 
+
 def mahalanobis_distance2(I, Q, center, cov, scale=1000):
     """
     a qua macro for calculating the (squared) Mahalanobis distance
@@ -199,28 +196,25 @@ def mahalanobis_distance2(I, Q, center, cov, scale=1000):
     :return: QUA variable representing the squared Mahalanobis distance
     """
 
-    inv_cov = np.linalg.inv(cov*scale**2)
+    inv_cov = np.linalg.inv(cov * scale**2)
     # inv_cov = np.eye(2) # for debug and comparison with naive distance method
     d2 = declare(fixed)
     deltaI = declare(fixed)
     deltaQ = declare(fixed)
     d00 = declare(fixed)
     d01 = declare(fixed)
-    d10  = declare(fixed)
+    d10 = declare(fixed)
     d11 = declare(fixed)
     # I0 = center[0]
     # Q0 = center[1]
 
-    assign(deltaI, scale*(I - center[0]))
-    assign(deltaQ, scale*(Q - center[1]))
-
+    assign(deltaI, scale * (I - center[0]))
+    assign(deltaQ, scale * (Q - center[1]))
 
     assign(d00, deltaI * inv_cov[0, 0] * deltaI)
     assign(d01, deltaI * inv_cov[0, 1] * deltaQ)
     assign(d10, deltaQ * inv_cov[1, 0] * deltaI)
     assign(d11, deltaQ * inv_cov[1, 1] * deltaQ)
-
-
 
     assign(d2, d00 + d01 + d10 + d11)
     # assign(d2,
@@ -233,9 +227,19 @@ def mahalanobis_distance2(I, Q, center, cov, scale=1000):
     return d2
 
 
-
-def readout_macro_mahalabonis(I=None, Q=None, state=None, centers = None, covs=None, scale=1000,  scale_amplitude=None, three_states = False, e2f=False, gap=10):
-    """ A macro for performing the readout and state discrimination for two (default) or three states.
+def readout_macro_mahalabonis(
+    I=None,
+    Q=None,
+    state=None,
+    centers=None,
+    covs=None,
+    scale=1000,
+    scale_amplitude=None,
+    three_states=False,
+    e2f=False,
+    gap=10,
+):
+    """A macro for performing the readout and state discrimination for two (default) or three states.
     It measures the 'I' and 'Q' quadratures, calculates the Mahalanobis distance to the centers of the three states,
     and assigns the state based on the closest center.
     :param I: QUA variable for the measured 'I' quadrature. If not given, a new variable will be created.
@@ -260,34 +264,45 @@ def readout_macro_mahalabonis(I=None, Q=None, state=None, centers = None, covs=N
     if covs is None:
         covs = gef_covs
 
-
     if e2f and (not three_states):
         align("qubit", "qubit_ef", "resonator")
-        play("x180_ef", "qubit_ef")  # play a pi pulse on the ef transition to take e to f and enhance the g-e separation
+        play(
+            "x180_ef", "qubit_ef"
+        )  # play a pi pulse on the ef transition to take e to f and enhance the g-e separation
         align("qubit", "qubit_ef", "resonator")
     if gap:
         wait(gap)
-    if opt_weights: # defined in the configuration file
+    if opt_weights:  # defined in the configuration file
         measure(
-            "readout"*amp(scale_amplitude) if scale_amplitude is not None else "readout",
+            (
+                "readout" * amp(scale_amplitude)
+                if scale_amplitude is not None
+                else "readout"
+            ),
             "resonator",
             None,
-            dual_demod.full('opt_cos', 'out1', 'opt_sin', 'out2', I),
-            dual_demod.full('opt_minus_sin', 'out1', 'opt_cos', 'out2', Q),
+            dual_demod.full("opt_cos", "out1", "opt_sin", "out2", I),
+            dual_demod.full("opt_minus_sin", "out1", "opt_cos", "out2", Q),
         )
 
     else:
         measure(
-            "readout"*amp(scale_amplitude) if scale_amplitude is not None else "readout",
+            (
+                "readout" * amp(scale_amplitude)
+                if scale_amplitude is not None
+                else "readout"
+            ),
             "resonator",
             None,
-            dual_demod.full('cos', 'out1', 'sin', 'out2', I),
-            dual_demod.full('minus_sin', 'out1', 'cos', 'out2', Q)
+            dual_demod.full("cos", "out1", "sin", "out2", I),
+            dual_demod.full("minus_sin", "out1", "cos", "out2", Q),
         )
 
     if e2f and (not three_states):
         align("qubit", "qubit_ef", "resonator")
-        play("x180_ef", "qubit_ef")  # play a pi pulse on the ef transition to take e to f and enhance the g-e separation
+        play(
+            "x180_ef", "qubit_ef"
+        )  # play a pi pulse on the ef transition to take e to f and enhance the g-e separation
         align("qubit", "qubit_ef", "resonator")
 
     # Calculate the Mahalanobis distance to the centers of the three states
@@ -302,17 +317,25 @@ def readout_macro_mahalabonis(I=None, Q=None, state=None, centers = None, covs=N
 
     # decide which is closer
     if three_states:
-        with if_(R0 <= R1): # use <= here to avoid errors if they happen to be equal (probably not the case, but still)
-            with if_(R0 <= R2): # use <= here to avoid errors if they happen to be equal (probably not the case, but still)
+        with if_(
+            R0 <= R1
+        ):  # use <= here to avoid errors if they happen to be equal (probably not the case, but still)
+            with if_(
+                R0 <= R2
+            ):  # use <= here to avoid errors if they happen to be equal (probably not the case, but still)
                 assign(state, 0)
-        with if_(R1 <= R2): # use <= here to avoid errors if they happen to be equal (probably not the case, but still)
+        with if_(
+            R1 <= R2
+        ):  # use <= here to avoid errors if they happen to be equal (probably not the case, but still)
             with if_(R1 < R0):
                 assign(state, 1)
         with if_(R2 < R0):
             with if_(R2 < R1):
                 assign(state, 2)
     else:
-        with if_(R0 <= R1): # use <= here to avoid errors if they happen to be equal (probably not the case, but still)
+        with if_(
+            R0 <= R1
+        ):  # use <= here to avoid errors if they happen to be equal (probably not the case, but still)
             assign(state, 0)
         with else_():
             assign(state, 1)
@@ -330,7 +353,8 @@ def readout_macro_mahalabonis(I=None, Q=None, state=None, centers = None, covs=N
     # else:
     return state, I, Q
 
-def get_populations(state,pop_vec = None, three_states=False):
+
+def get_populations(state, pop_vec=None, three_states=False):
     n_states = 3 if three_states else 2
     if pop_vec is None:
         pop_vec = [declare(bool) for _ in range(n_states)]
@@ -342,7 +366,9 @@ def get_populations(state,pop_vec = None, three_states=False):
     return pop_vec
 
 
-def state_tomography(c, I=None, Q=None, state=None, gap=4, element="qubit", three_states=False, e2f=False):
+def state_tomography(
+    c, I=None, Q=None, state=None, gap=4, element="qubit", three_states=False, e2f=False
+):
     with switch_(c):
         with case_(0):  # projection along X
             # Map the X-component of the Bloch vector onto the Z-axis (measurement axis)
@@ -354,10 +380,11 @@ def state_tomography(c, I=None, Q=None, state=None, gap=4, element="qubit", thre
             # Align the two elements to measure after playing the qubit pulses.
             align(element, "resonator")
             # Measure the resonator and extract the qubit state
-            state, _, _ = readout_macro_mahalabonis(I, Q, state, three_states=three_states, e2f=e2f)
+            state, _, _ = readout_macro_mahalabonis(
+                I, Q, state, three_states=three_states, e2f=e2f
+            )
             # pop_vec = get_populations(state, three_states=three_states)
             # return state, pop_vec
-
 
         with case_(1):  # projection along X
             # Map the X-component of the Bloch vector onto the Z-axis (measurement axis)
@@ -368,7 +395,9 @@ def state_tomography(c, I=None, Q=None, state=None, gap=4, element="qubit", thre
             align(element, "resonator")
             # Measure the resonator and extract the qubit state
             # state, _, _ = readout_macro()
-            state, _, _ = readout_macro_mahalabonis(I, Q, state, three_states=three_states, e2f=e2f)
+            state, _, _ = readout_macro_mahalabonis(
+                I, Q, state, three_states=three_states, e2f=e2f
+            )
             # pop_vec = get_populations(state, three_states=three_states)
             # return state, pop_vec
 
@@ -381,7 +410,9 @@ def state_tomography(c, I=None, Q=None, state=None, gap=4, element="qubit", thre
             # Align the two elements to measure after playing the qubit pulses.
             align(element, "resonator")
             # Measure the resonator and extract the qubit state
-            state, _, _ = readout_macro_mahalabonis(I, Q, state, three_states=three_states, e2f=e2f)
+            state, _, _ = readout_macro_mahalabonis(
+                I, Q, state, three_states=three_states, e2f=e2f
+            )
             # pop_vec = get_populations(state, three_states=three_states)
             # return state, pop_vec
 
@@ -394,7 +425,9 @@ def state_tomography(c, I=None, Q=None, state=None, gap=4, element="qubit", thre
             # Align the two elements to measure after playing the qubit pulses.
             align(element, "resonator")
             # Measure the resonator and extract the qubit state
-            state, _, _ = readout_macro_mahalabonis(I, Q, state, three_states=three_states, e2f=e2f)
+            state, _, _ = readout_macro_mahalabonis(
+                I, Q, state, three_states=three_states, e2f=e2f
+            )
             # pop_vec = get_populations(state, three_states=three_states)
             # return state, pop_vec
 
@@ -406,7 +439,9 @@ def state_tomography(c, I=None, Q=None, state=None, gap=4, element="qubit", thre
             # Align the two elements to measure after playing the qubit pulses.
             align(element, "resonator")
             # Measure the Z-component of the Bloch vector
-            state, _, _ = readout_macro_mahalabonis(I, Q, state, three_states=three_states, e2f=e2f)
+            state, _, _ = readout_macro_mahalabonis(
+                I, Q, state, three_states=three_states, e2f=e2f
+            )
             # pop_vec = get_populations(state, three_states=three_states)
             # return state, pop_vec
 
@@ -418,12 +453,13 @@ def state_tomography(c, I=None, Q=None, state=None, gap=4, element="qubit", thre
             # Align the two elements to measure after playing the qubit pulses.
             align(element, "resonator")
             # Measure the Z-component of the Bloch vector
-            state, _, _ = readout_macro_mahalabonis(I, Q, state, three_states=three_states, e2f=e2f)
+            state, _, _ = readout_macro_mahalabonis(
+                I, Q, state, three_states=three_states, e2f=e2f
+            )
             # pop_vec = get_populations(state, three_states=three_states)
             # return state, pop_vec
     pop_vec = get_populations(state, three_states=three_states)
     return state, pop_vec
-
 
 
 def readout_macro_tomography(threshold=None, state=None, I=None, Q=None):
@@ -437,8 +473,8 @@ def readout_macro_tomography(threshold=None, state=None, I=None, Q=None):
         "readout",
         "resonator",
         None,
-        dual_demod.full('cos', 'out1', 'sin', 'out2', I),
-        dual_demod.full('minus_sin', 'out1', 'cos', 'out2', Q)
+        dual_demod.full("cos", "out1", "sin", "out2", I),
+        dual_demod.full("minus_sin", "out1", "cos", "out2", Q),
     )
 
     # measure(
@@ -475,7 +511,9 @@ def readout_macro_tomography(threshold=None, state=None, I=None, Q=None):
 #         play("reset", "qubit_reset", condition =  state_reset==1)
 
 
-def active_reset_fast(I_reset = None, Q_reset = None, state_reset = None, n=10, three_state_AR = True):
+def active_reset_fast(
+    I_reset=None, Q_reset=None, state_reset=None, n=10, three_state_AR=True
+):
     if I_reset is None:
         I_reset = declare(fixed)
 
@@ -491,26 +529,26 @@ def active_reset_fast(I_reset = None, Q_reset = None, state_reset = None, n=10, 
         readout_macro_mahalabonis(I_reset, Q_reset, state_reset, three_states=True)
         # align()
         # play("x180_ef", "qubit_ef", condition=state_reset == 1)
-        align("qubit", "qubit_reset", "resonator","qubit_ef")
+        align("qubit", "qubit_reset", "resonator", "qubit_ef")
         play("reset", "qubit_reset", condition=state_reset == 1)
         if three_state_AR:
-            align("qubit", "qubit_reset", "resonator","qubit_ef")
+            align("qubit", "qubit_reset", "resonator", "qubit_ef")
             play("x180_ef", "qubit_ef", condition=state_reset == 2)
-            align("qubit", "qubit_reset", "resonator","qubit_ef")
+            align("qubit", "qubit_reset", "resonator", "qubit_ef")
             play("reset", "qubit_reset", condition=state_reset == 2)
-            align("qubit", "qubit_reset", "resonator","qubit_ef")
+            align("qubit", "qubit_reset", "resonator", "qubit_ef")
         else:
-            with if_(state_reset==2):
-                align("qubit", "qubit_reset", "resonator","qubit_ef")
-                wait(thermalization_time//4)
+            with if_(state_reset == 2):
+                align("qubit", "qubit_reset", "resonator", "qubit_ef")
+                wait(thermalization_time // 4)
                 align("qubit", "qubit_reset", "resonator", "qubit_ef")
                 # break
-
 
         # break
 
         # play("x180_ef","qubit_ef",condition=state==2)
         # play("reset", "qubit_reset", condition=state == 2)
+
 
 def active_reset_slow():
     I_reset = declare(fixed)
@@ -530,9 +568,17 @@ def active_reset_slow():
     return counter
 
 
-def qubit_initialization(apply=False, n=6, three_state=True, I_reset=None, Q_reset=None, state_reset=None):
+def qubit_initialization(
+    apply=False, n=6, three_state=False, I_reset=None, Q_reset=None, state_reset=None
+):
     if apply:
-        active_reset_fast(I_reset = I_reset, Q_reset=Q_reset, state_reset=state_reset, n=n, three_state_AR=three_state)
+        active_reset_fast(
+            I_reset=I_reset,
+            Q_reset=Q_reset,
+            state_reset=state_reset,
+            n=n,
+            three_state_AR=three_state,
+        )
     else:
         wait(thermalization_time // 4)
 
@@ -616,15 +662,17 @@ class qubit_frequency_tracking:
     def _fit_ramsey(x, y):
         w = np.fft.fft(y)
         freq = np.fft.fftfreq(len(x))
-        new_w = w[1: len(freq // 2)]
-        new_f = freq[1: len(freq // 2)]
+        new_w = w[1 : len(freq // 2)]
+        new_f = freq[1 : len(freq // 2)]
 
         ind = new_f > 0
         new_f = new_f[ind]
         new_w = new_w[ind]
 
         yy = np.abs(new_w)
-        first_read_data_ind = np.where(yy[1:] - yy[:-1] > 0)[0][0]  # away from the DC peak
+        first_read_data_ind = np.where(yy[1:] - yy[:-1] > 0)[0][
+            0
+        ]  # away from the DC peak
 
         new_f = new_f[first_read_data_ind:]
         new_w = new_w[first_read_data_ind:]
@@ -635,8 +683,16 @@ class qubit_frequency_tracking:
         omega = out_freq * 2 * np.pi / (x[1] - x[0])  # get gauss for frequency #here
 
         cycle = int(np.ceil(1 / out_freq))
-        peaks = np.array([np.std(y[i * cycle: (i + 1) * cycle]) for i in range(int(len(y) / cycle))]) * np.sqrt(
-            2) * 2
+        peaks = (
+            np.array(
+                [
+                    np.std(y[i * cycle : (i + 1) * cycle])
+                    for i in range(int(len(y) / cycle))
+                ]
+            )
+            * np.sqrt(2)
+            * 2
+        )
 
         initial_offset = np.mean(y[:cycle])
         cycles_wait = np.where(peaks > peaks[0] * 0.37)[0][-1]
@@ -644,15 +700,20 @@ class qubit_frequency_tracking:
         post_decay_mean = np.mean(y[-cycle:])
 
         decay_gauss = (
-                np.log(peaks[0] / peaks[cycles_wait]) / (cycles_wait * cycle) / (x[1] - x[0])
+            np.log(peaks[0] / peaks[cycles_wait])
+            / (cycles_wait * cycle)
+            / (x[1] - x[0])
         )  # get gauss for decay #here
 
-        fit_type = lambda x, a: post_decay_mean * a[4] * (1 - np.exp(-x * decay_gauss * a[1])) + peaks[0] / 2 * a[
-            2] * (
-                                        np.exp(-x * decay_gauss * a[1])
-                                        * (a[5] * initial_offset / peaks[0] * 2 + np.cos(
-                                    2 * np.pi * a[0] * omega / (2 * np.pi) * x + a[3]))
-                                )  # here problem, removed the 1+
+        fit_type = lambda x, a: post_decay_mean * a[4] * (
+            1 - np.exp(-x * decay_gauss * a[1])
+        ) + peaks[0] / 2 * a[2] * (
+            np.exp(-x * decay_gauss * a[1])
+            * (
+                a[5] * initial_offset / peaks[0] * 2
+                + np.cos(2 * np.pi * a[0] * omega / (2 * np.pi) * x + a[3])
+            )
+        )  # here problem, removed the 1+
 
         def curve_fit3(f, x, y, a0):
             def opt(x, y, a):
@@ -683,7 +744,13 @@ class qubit_frequency_tracking:
             "initial_offset": popt[5] * initial_offset,
         }
 
-        plt.plot(x, fit_type(x, [1, 1, 1, angle0, 1, 1, 1]), "--r", linewidth=1, label="Fit initial guess")
+        plt.plot(
+            x,
+            fit_type(x, [1, 1, 1, angle0, 1, 1, 1]),
+            "--r",
+            linewidth=1,
+            label="Fit initial guess",
+        )
         return out
 
     def time_domain_ramsey_full_sweep(self, n_avg, f_det, tau_vec, correct=False):
@@ -723,7 +790,10 @@ class qubit_frequency_tracking:
                 # Perform Time domain Ramsey with a frame rotation instead of detuning
                 # 4*tau because tau was in clock cycles and 1e-9 because tau is ns
                 if self.frame_rotation:
-                    frame_rotation_2pi(Cast.mul_fixed_by_int(self.f_det * 1e-9, 4 * self.tau), self.qubit)
+                    frame_rotation_2pi(
+                        Cast.mul_fixed_by_int(self.f_det * 1e-9, 4 * self.tau),
+                        self.qubit,
+                    )
                 play("x90", self.qubit)
 
                 align(self.qubit, self.rr)
@@ -761,7 +831,9 @@ class qubit_frequency_tracking:
         plt.ylabel("P(|e>)")
         # New intermediate frequency: f_res - (fitted_detuning - f_det)
         self.f_res = self.f_res - int(out["f"] * 1e9 - self.f_det)
-        print(f"shifting by {out['f'] * 1e9 - self.f_det:.0f} Hz, and now f_res = {self.f_res} Hz")
+        print(
+            f"shifting by {out['f'] * 1e9 - self.f_det:.0f} Hz, and now f_res = {self.f_res} Hz"
+        )
 
         # Dephasing time leading to a phase-shift of 2*pi for a frequency detuning f_det
         tau_2pi = int(1 / self.f_det / 4e-9)
@@ -788,7 +860,9 @@ class qubit_frequency_tracking:
             self.init = False
         self.f_vec = f_vec
         # Dephasing time to get a given number of oscillations in the frequency range given by f_vec
-        self.dephasing_time = max(oscillation_number * int(1 / (2 * (max(f_vec) - self.f_res)) / 4e-9), 4)
+        self.dephasing_time = max(
+            oscillation_number * int(1 / (2 * (max(f_vec) - self.f_res)) / 4e-9), 4
+        )
 
         with for_(self.n, 0, self.n < n_avg, self.n + 1):
             with for_(*from_array(self.f, f_vec)):
@@ -804,9 +878,15 @@ class qubit_frequency_tracking:
                 play("x90", self.qubit)
 
                 if self.frame_rotation:
-                    assign(self.frame_rotation_detuning, Cast.mul_fixed_by_int(self.Hz_to_GHz, self.f - self.f_res))
+                    assign(
+                        self.frame_rotation_detuning,
+                        Cast.mul_fixed_by_int(self.Hz_to_GHz, self.f - self.f_res),
+                    )
                     frame_rotation_2pi(
-                        Cast.mul_fixed_by_int(self.frame_rotation_detuning, 4 * self.dephasing_time), self.qubit
+                        Cast.mul_fixed_by_int(
+                            self.frame_rotation_detuning, 4 * self.dephasing_time
+                        ),
+                        self.qubit,
                     )
                 wait(self.dephasing_time, self.qubit)
                 play("x90", self.qubit)
@@ -826,7 +906,10 @@ class qubit_frequency_tracking:
                 ####################################################################################################
                 # Convert bool to fixed to perform the average
                 assign(self.state_estimation, Cast.to_fixed(self.res))
-                save(self.state_estimation, self.state_estimation_st[self.state_estimation_st_idx])
+                save(
+                    self.state_estimation,
+                    self.state_estimation_st[self.state_estimation_st_idx],
+                )
         # Increment state_estimation_st_idx in case other full sweeps are performed within the same program.
         self.state_estimation_st_idx += 1
 
@@ -842,9 +925,15 @@ class qubit_frequency_tracking:
         # HWHM of the frequency domain Ramsey central fringe around the qubit resonance
         # i.e. detuning to go from resonance to  half fringe
         self.delta = int(
-            1 / (self.dephasing_time * 4e-9) / 4)  # the last 4 is for 1/4 of a cycle (dephasing of pi/2)
+            1 / (self.dephasing_time * 4e-9) / 4
+        )  # the last 4 is for 1/4 of a cycle (dephasing of pi/2)
         # Plot fit
-        plt.plot(self.f_vec - self.f_res, out["fit_func"](self.f_vec - self.f_res), "m", label="fit")
+        plt.plot(
+            self.f_vec - self.f_res,
+            out["fit_func"](self.f_vec - self.f_res),
+            "m",
+            label="fit",
+        )
         # Plot specific points at half the central fringe
         plt.plot(
             [-self.delta, self.delta],
@@ -863,7 +952,7 @@ class qubit_frequency_tracking:
         :param int n_avg_power_of_2: power of two defining the number of averages as n_avg=2**n_avg_power_of_2
         :return:
         """
-        if n_avg_power_of_2 > 20 or not np.log2(2 ** n_avg_power_of_2).is_integer():
+        if n_avg_power_of_2 > 20 or not np.log2(2**n_avg_power_of_2).is_integer():
             raise ValueError(
                 "'n_avg_power_of_2' must be defined as the power of two defining the number of averages (n_avg=2**n_avg_power_of_2)"
             )
@@ -881,7 +970,7 @@ class qubit_frequency_tracking:
         assign(self.two_point_vec[0], 0)  # Left side
         assign(self.two_point_vec[1], 0)  # Right side
         # Number of averages defined as a power of 2 to perform the average on the FPGA using bit-shifts.
-        with for_(self.n, 0, self.n < 2 ** n_avg_power_of_2, self.n + 1):
+        with for_(self.n, 0, self.n < 2**n_avg_power_of_2, self.n + 1):
             # Go to the left side of the central fringe
             assign(self.f, self.f_res_corr - self.delta)
             # Alternate between left and right sides
@@ -904,7 +993,10 @@ class qubit_frequency_tracking:
                         Cast.mul_fixed_by_int(self.Hz_to_GHz, self.f - self.f_res_corr),
                     )
                     frame_rotation_2pi(
-                        Cast.mul_fixed_by_int(self.frame_rotation_detuning, 4 * self.dephasing_time), self.qubit
+                        Cast.mul_fixed_by_int(
+                            self.frame_rotation_detuning, 4 * self.dephasing_time
+                        ),
+                        self.qubit,
                     )
                 play("x90", self.qubit)
 
@@ -925,13 +1017,19 @@ class qubit_frequency_tracking:
                 # Sum the results and divide by the number of iterations to get the average on the fly
                 assign(
                     self.two_point_vec[self.idx],
-                    self.two_point_vec[self.idx] + (Cast.to_fixed(self.res) >> n_avg_power_of_2),
+                    self.two_point_vec[self.idx]
+                    + (Cast.to_fixed(self.res) >> n_avg_power_of_2),
                 )
                 # Go to the right side of the central fringe
                 assign(self.f, self.f + 2 * self.delta)
 
         # Derive the frequency shift
-        assign(self.corr, Cast.mul_int_by_fixed(scale_factor, (self.two_point_vec[0] - self.two_point_vec[1])))
+        assign(
+            self.corr,
+            Cast.mul_int_by_fixed(
+                scale_factor, (self.two_point_vec[0] - self.two_point_vec[1])
+            ),
+        )
         # To keep track of the qubit frequency over time
         assign(self.f_res_corr, self.f_res_corr - self.corr)
 

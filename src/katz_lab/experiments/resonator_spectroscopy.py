@@ -2,7 +2,6 @@ import numpy as np
 from scipy import signal
 import matplotlib.pyplot as plt
 
-
 from qm.qua import *
 from qm import QuantumMachinesManager
 from qualang_tools.results import progress_counter, fetching_tool
@@ -28,9 +27,9 @@ class ResonatorSpectroscopy(BaseExperiment):
         qmm: QuantumMachinesManager = None,
     ):
         self.qubit = qubit
-        self.frequencies = frequencies
+        self.frequencies = resonator_LO - frequencies
 
-        super().__init__(options=options, config=config, qmm=qmm)
+        super().__init__(qubit=qubit, options=options, config=config, qmm=qmm)
 
     def define_program(self):
         with program() as resonator_spec:
@@ -46,17 +45,10 @@ class ResonatorSpectroscopy(BaseExperiment):
             Q_st2 = declare_stream()  # Stream for the 'Q' quadrature
             n_st = declare_stream()  # Stream for the averaging iteration 'n'
 
-            with for_(
-                n, 0, n < self.options.n_avg, n + 1
-            ):  # QUA for_ loop for averaging
-                with for_(
-                    *from_array(f, self.frequencies)
-                ):  # QUA for_ loop for sweeping the frequency
+            with for_(n, 0, n < self.options.n_avg, n + 1):
+                with for_(*from_array(f, self.frequencies)):
                     update_frequency("resonator", f)
-                    if self.options.discriminate_ef and not self.options.long_pulse:
-                        play("x180", "qubit")
-                        wait(100, "qubit")
-                        align("qubit", "resonator")
+
                     measure(
                         "readout",
                         "resonator",
@@ -65,16 +57,13 @@ class ResonatorSpectroscopy(BaseExperiment):
                         dual_demod.full("minus_sin", "out1", "cos", "out2", Q1),
                     )
                     wait(thermalization_time // 4, "resonator")
+                    align("qubit", "resonator")
+
                     if self.options.long_pulse:
                         play("saturation", "qubit")
-                        # play("saturation", "qubit2")
-
                     else:
-                        if self.options.discriminate_ef:
-                            play("x180", "qubit")
-                            play("x180_ef", "qubit_ef")
-                        else:
-                            play("x180", "qubit")
+                        play("x180", "qubit")
+
                     wait(100, "qubit")
                     align("qubit", "resonator")
                     measure(
@@ -172,7 +161,7 @@ class ResonatorSpectroscopy(BaseExperiment):
         fig = plt.figure()
 
         S1 = self.results["S1"]
-        S2 = self.results["S2"] 
+        S2 = self.results["S2"]
         R1 = self.results["R1"]
         R2 = self.results["R2"]
         phase1 = self.results["phase1"]
@@ -234,18 +223,19 @@ if __name__ == "__main__":
 
     qubit = "q10"
     options = OptionsResonatorSpectroscopy()
+    options.long_pulse = True
+    options.n_avg = 100
+    options.simulate = False
 
-    span = 4 * u.MHz
+    span = 20 * u.MHz
     f_min = resonator_freq - span / 2
     f_max = resonator_freq + span / 2
     df = 200 * u.kHz
 
-    frequencies = resonator_LO - np.arange(f_min, f_max + 0.1, df)
+    frequencies = np.arange(f_min, f_max + 0.1, df)
 
     experiment = ResonatorSpectroscopy(
         qubit=qubit, frequencies=frequencies, options=options, config=config
     )
 
     experiment.run()
-
-    print(experiment.results)

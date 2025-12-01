@@ -36,7 +36,7 @@ class QubitSpectroscopy(BaseExperiment):
             options = OptionsQubitSpectroscopy()
         super().__init__(qubit=qubit, options=options, config=config, qmm=qmm)
 
-        self.frequencies = frequencies
+        self.frequencies = qubit_LO - frequencies
 
     def define_program(self):
         with program() as qubit_spec:
@@ -49,9 +49,7 @@ class QubitSpectroscopy(BaseExperiment):
 
             with for_(n, 0, n < self.options.n_avg, n + 1):
                 with for_(*from_array(df, self.frequencies)):
-                    # qubit_initialization(
-                    #     self.active_reset, three_state=self.AR_three_state
-                    # )
+                    qubit_initialization(self.options.active_reset)
                     update_frequency("qubit", df)
                     play(
                         "saturation",
@@ -127,13 +125,16 @@ class QubitSpectroscopy(BaseExperiment):
 
 if __name__ == "__main__":
     qubit = "q10"
+
     options = OptionsQubitSpectroscopy()
     options.state_discrimination = False
+    options.n_avg = 3
+    options.active_reset = False
+    options.simulate = False
 
-    center = 0
     span = 100e6
-    N = 100
-    frequencies = qubit_LO - np.arange(center - span / 2, center + span / 2, span // N)
+    N = 11
+    frequencies = np.arange(-span / 2, span / 2, span // N)
 
     experiment = QubitSpectroscopy(
         frequencies=frequencies,
