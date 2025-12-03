@@ -199,11 +199,11 @@ time_of_flight = resonator_args["time_of_flight"]
 smearing = resonator_args["smearing"]
 depletion_time = 0 * u.us
 
-fid_matrix = resonator_args["fidelity_matrix"]
-fid_matrix_2 = np.array(resonator_args["fidelity_matrix_2"])
-fid_matrix_3 = np.array(resonator_args["fidelity_matrix_3"])
-gef_centers = resonator_args["gef_centers"]
-gef_covs = [np.array(cov_mat) for cov_mat in resonator_args["gef_covariance_mats"]]
+# fid_matrix = resonator_args["fidelity_matrix"]
+# fid_matrix_2 = np.array(resonator_args["fidelity_matrix_2"])
+# fid_matrix_3 = np.array(resonator_args["fidelity_matrix_3"])
+# gef_centers = resonator_args["gef_centers"]
+# gef_covs = [np.array(cov_mat) for cov_mat in resonator_args["gef_covariance_mats"]]
 ringdown_length = 0
 
 opt_weights = False
