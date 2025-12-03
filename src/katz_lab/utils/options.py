@@ -7,7 +7,7 @@ class Options:
     state_discrimination: bool = True
     plot: bool = True
     simulate: bool = False
-    save: bool = False
+    save: bool = True
     dc_set_voltage: bool = False
     states_to_measure: list = field(default_factory=lambda: ["gef"])
     update_args: bool = False
