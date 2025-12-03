@@ -101,6 +101,16 @@ class QUAConfigBuilder:
         return self.config
 
 
+#TODO: implement
+def _add_qubit(config, qubit_name, qubit_args):
+    
+    pass
+#TODO: implement
+def _add_pulse()
+    pass
+
+
+
 if __name__ == "__main__":
     qubit_name = "q10"
     config = QUAConfigBuilder(qubit=qubit_name, options=Options(), args=args).build()
