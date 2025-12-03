@@ -13,7 +13,7 @@ from katz_lab.experiments.base_experiment import BaseExperiment, Options
 
 
 class OptionsResonatorSpectroscopy(Options):
-    long_pulse: bool = False
+    long_pulse: bool = True
     discriminate_ef: bool = False
 
 
@@ -23,11 +23,12 @@ class ResonatorSpectroscopy(BaseExperiment):
         qubit: str,
         frequencies: np.ndarray,
         options: OptionsResonatorSpectroscopy,
-        config: dict,
+        config: dict = None,
         qmm: QuantumMachinesManager = None,
     ):
         self.qubit = qubit
         self.frequencies = resonator_LO - frequencies
+
 
         super().__init__(qubit=qubit, options=options, config=config, qmm=qmm)
 
@@ -235,7 +236,10 @@ if __name__ == "__main__":
     frequencies = np.arange(f_min, f_max + 0.1, df)
 
     experiment = ResonatorSpectroscopy(
-        qubit=qubit, frequencies=frequencies, options=options, config=config
+        qubit=qubit,
+         frequencies=frequencies,
+          options=options,
+           config=config
     )
 
     experiment.run()
