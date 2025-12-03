@@ -80,8 +80,8 @@
             "readout_pulse_amplitude": 0.0593896,
             "time_of_flight": 340,
             "smearing": 0,
-            "rotation_angle": 108.31843183166788,
-            "threshold": -0.0017957765068800599,
+            "rotation_angle": 114.59728573600441,
+            "threshold": -0.0016983741373775504,
             "fidelity_matrix": [
                 [
                     0.8736,

@@ -23,13 +23,9 @@ con = "con1"
 #############################################
 
 qubit_anharmonicity = qubit_args["qubit_anharmonicity"]
-
 qubit_LO = qubit_args["qubit_LO"]
-
 sweet_spot_flag = False
-
 qubit_freq = qubit_args["qubit_ge_freq"]
-
 
 flux_bias = 0
 qubit_IF = qubit_LO - qubit_freq
