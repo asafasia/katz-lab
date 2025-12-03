@@ -58,6 +58,7 @@ class BaseExperiment(ABC):
     def save_results(self):
         pass
 
+    @abstractmethod
     def update_params(self):
         pass
 

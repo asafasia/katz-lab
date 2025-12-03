@@ -184,6 +184,9 @@ class PowerRabiExperiment(BaseExperiment):
         #     )
         pass
 
+    def update_params(self):
+        pass
+
 
 if __name__ == "__main__":
     qubit = "q10"

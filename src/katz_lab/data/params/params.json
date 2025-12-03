@@ -16,7 +16,7 @@
                 1.0220001243597812
             ],
             "qubit_LO": 4500000000,
-            "qubit_ge_freq": 4406764310,
+            "qubit_ge_freq": 4406763100,
             "qubit_ef_freq": 4406764310,
             "qubit_anharmonicity": -232349980,
             "sweet_spot_flag": 1,
