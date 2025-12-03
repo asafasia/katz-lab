@@ -7,7 +7,12 @@ from katz_lab.utils.config import *
 from katz_lab.utils.helper_functions import IQ_imbalance
 from katz_lab.library.pulses import generate_gaussian_pulse
 import numpy as np
+from katz_lab.utils.params import Params
 
+
+args = Params()
+
+qubit_args = args[qubit]["qubit"]
 
 u = unit(coerce_to_integer=True)
 

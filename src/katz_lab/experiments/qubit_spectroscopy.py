@@ -147,7 +147,7 @@ if __name__ == "__main__":
     qubit = "q10"
 
     options = OptionsQubitSpectroscopy()
-    options.state_discrimination = False
+    options.state_discrimination = True
     options.n_avg = 100
     options.active_reset = False
     options.simulate = False

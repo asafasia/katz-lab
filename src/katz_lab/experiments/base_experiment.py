@@ -58,6 +58,9 @@ class BaseExperiment(ABC):
     def save_results(self):
         pass
 
+    def update_params(self):
+        pass
+
     def run(self):
         self.define_program()
 
@@ -88,3 +91,6 @@ class BaseExperiment(ABC):
                 self.plot_results()
             if self.options.save:
                 self.save_results()
+
+            if self.options.update_args:
+                self.update_params()

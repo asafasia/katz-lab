@@ -19,13 +19,3 @@ qm_host = "192.168.43.253"
 qm_port = 9510
 
 
-with open(ARGS_PATH, "r") as file:
-    args = json.load(file)
-
-
-qubit_args = args[qubit]["qubit"]
-
-if __name__ == "__main__":
-    from pprint import pprint
-
-    pprint(args)

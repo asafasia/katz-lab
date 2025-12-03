@@ -11,6 +11,8 @@ from katz_lab.experiments.base_experiment import BaseExperiment, Options
 
 from qualang_tools.analysis.discriminator import two_state_discriminator
 
+from katz_lab.utils.params import args
+
 
 class OptionsIQBlobs(Options):
     pass
@@ -114,6 +116,10 @@ class IQBlobsExperiment(BaseExperiment):
             b_plot=True,
         )
 
+        self.data["threshold"] = threshold
+        self.data["angle"] = angle
+        self.data["fidelity"] = fidelity
+
         # two_state_discrimination_calib(
         #     np.column_stack((self.I_g, self.Q_g)),
         #     np.column_stack((self.I_e, self.Q_e)),
@@ -141,11 +147,19 @@ class IQBlobsExperiment(BaseExperiment):
     def save_results(self):
         pass
 
+    def update_params(self):
+        new_angle = args[f"{self.qubit}/resonator/rotation_angle"] + self.data["angle"]
+        new_angle = new_angle % 360
+        new_threshold = self.data["threshold"]
+        args[f"{self.qubit}/resonator/threshold"] = new_threshold
+        args[f"{self.qubit}/resonator/rotation_angle"] = new_angle
+
 
 if __name__ == "__main__":
     qubit = "q10"
     options = OptionsIQBlobs()
     options.n_avg = 10000
+    options.update_args = True
     experiment = IQBlobsExperiment(
         qubit=qubit,
         options=options,

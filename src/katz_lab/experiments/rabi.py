@@ -131,17 +131,17 @@ class PowerRabiExperiment(BaseExperiment):
 
         plt.plot(amplitudes * self.rabi_amp * self.options.num_pis * 1e3, state, ".")
 
-        if self.fit_args is not None:
+        # if self.fit_args is not None:
 
-            def cos_fit(x, a, b, c, d):
-                return a * np.cos(2 * np.pi * 1 / b * x + c) + d
+        #     def cos_fit(x, a, b, c, d):
+        #         return a * np.cos(2 * np.pi * 1 / b * x + c) + d
 
-            plt.plot(
-                self.x * 1e3,
-                cos_fit(self.x, *self.fit_args),
-                "r-",
-                label=f"fit rabi amp = {self.fit_args[1] / 2:.5f} V",
-            )
+        #     plt.plot(
+        #         self.x * 1e3,
+        #         cos_fit(self.x, *self.fit_args),
+        #         "r-",
+        #         label=f"fit rabi amp = {self.fit_args[1] / 2:.5f} V",
+        #     )
 
         plt.title("Power Rabi g->e transition")
         plt.xlabel("Rabi amplitude (mV)")

@@ -25,7 +25,7 @@
             "flux_bias_channel": 2,
             "flux_sweet_spot": -0.3372888584760113,
             "reset_gate": {
-                "length": 40,
+                "length": 70,
                 "amplitude": 0.06576319751403452
             },
             "square_gate": {
@@ -76,12 +76,12 @@
             ],
             "resonator_LO": 7610000000.0,
             "resonator_freq": 7585263527,
-            "readout_pulse_length": 3000,
-            "readout_pulse_amplitude": 0.0793896,
+            "readout_pulse_length": 2000,
+            "readout_pulse_amplitude": 0.0593896,
             "time_of_flight": 340,
             "smearing": 0,
-            "rotation_angle": 112.6,
-            "threshold": -1.250e-03,
+            "rotation_angle": 108.31843183166788,
+            "threshold": -0.0017957765068800599,
             "fidelity_matrix": [
                 [
                     0.8736,
