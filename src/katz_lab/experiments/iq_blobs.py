@@ -5,9 +5,11 @@ from qm.qua import *
 from qm import QuantumMachinesManager
 from qualang_tools.results import fetching_tool, progress_counter
 
-from katz_lab.utils.macros import readout_macro_mahalabonis, qubit_initialization
+from katz_lab.utils.macros import readout_macro, qubit_initialization
 
 from katz_lab.experiments.base_experiment import BaseExperiment, Options
+
+from qualang_tools.analysis.discriminator import two_state_discriminator
 
 
 class OptionsIQBlobs(Options):
@@ -37,16 +39,16 @@ class IQBlobsExperiment(BaseExperiment):
 
             with for_(n, 0, n < self.options.n_avg, n + 1):
                 # Ground state measurement
-                state_g, I_g, Q_g = readout_macro_mahalabonis()
+                state_g, I_g, Q_g = readout_macro()
                 qubit_initialization(
                     self.options.active_reset,
                 )
 
                 # Excited state measurement
                 align()
-                play("saturation", "qubit")
+                play("x180", "qubit")
                 align("qubit", "resonator")
-                state_e, I_e, Q_e = readout_macro_mahalabonis()
+                state_e, I_e, Q_e = readout_macro()
                 qubit_initialization(
                     self.options.active_reset,
                 )
@@ -102,11 +104,15 @@ class IQBlobsExperiment(BaseExperiment):
         return results
 
     def analyze_results(self):
-        pass
-        # IQ discrimination
-        # angle, threshold, fidelity, gg, ge, eg, ee = two_state_discriminator(
-        #     self.I_g, self.Q_g, self.I_e, self.Q_e, b_print=True, b_plot=True
-        # )
+
+        angle, threshold, fidelity, gg, ge, eg, ee = two_state_discriminator(
+            self.results["I_g"],
+            self.results["Q_g"],
+            self.results["I_e"],
+            self.results["Q_e"],
+            b_print=True,
+            b_plot=True,
+        )
 
         # two_state_discrimination_calib(
         #     np.column_stack((self.I_g, self.Q_g)),
@@ -129,32 +135,7 @@ class IQBlobsExperiment(BaseExperiment):
         # return fidelity_realtime
 
     def plot_results(self):
-        plt.figure(figsize=(12, 6))
 
-        plt.subplot(1, 2, 1)
-        plt.scatter(
-            self.results["I_g"],
-            self.results["Q_g"],
-            label="ground",
-            color="C00",
-            alpha=0.5,
-        )
-        plt.scatter(
-            self.results["I_e"],
-            self.results["Q_e"],
-            label="excited",
-            color="C03",
-            alpha=0.2,
-        )
-
-        plt.subplot(1, 2, 2)
-        plt.hist(self.results["I_g"], bins=50, alpha=0.5, label="ground")
-        plt.hist(self.results["I_e"], bins=50, alpha=0.5, label="excited")
-
-        plt.xlabel("I")
-        plt.ylabel("Q")
-        plt.legend()
-        plt.title("IQ Blobs")
         plt.show()
 
     def save_results(self):
@@ -164,7 +145,7 @@ class IQBlobsExperiment(BaseExperiment):
 if __name__ == "__main__":
     qubit = "q10"
     options = OptionsIQBlobs()
-    options.n_avg = 20000
+    options.n_avg = 10000
     experiment = IQBlobsExperiment(
         qubit=qubit,
         options=options,

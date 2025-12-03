@@ -122,7 +122,7 @@ def readout_macro():
     """
     I = declare(fixed)
     Q = declare(fixed)
-    state = declare(bool)
+    state = declare(fixed)
 
     if opt_weights:
         measure(
@@ -142,7 +142,10 @@ def readout_macro():
             dual_demod.full("minus_sin", "out1", "cos", "out2", Q),
         )
 
-    assign(state, I > ge_threshold)
+    with if_(I > ge_threshold):
+        assign(state, 1)
+    with if_(I <= ge_threshold):
+        assign(state, 0)
     return state, I, Q
 
 

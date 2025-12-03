@@ -29,7 +29,6 @@ class ResonatorSpectroscopy(BaseExperiment):
         self.qubit = qubit
         self.frequencies = resonator_LO - frequencies
 
-
         super().__init__(qubit=qubit, options=options, config=config, qmm=qmm)
 
     def define_program(self):
@@ -80,7 +79,7 @@ class ResonatorSpectroscopy(BaseExperiment):
                     save(Q2, Q_st2)
                     wait(thermalization_time // 4, "resonator")
 
-                save(n, n_st)
+                    save(n, n_st)
 
             self.program = resonator_spec
 
@@ -224,11 +223,11 @@ if __name__ == "__main__":
 
     qubit = "q10"
     options = OptionsResonatorSpectroscopy()
-    options.long_pulse = True
     options.n_avg = 100
     options.simulate = False
+    options.long_pulse = True
 
-    span = 20 * u.MHz
+    span = 30 * u.MHz
     f_min = resonator_freq - span / 2
     f_max = resonator_freq + span / 2
     df = 200 * u.kHz
@@ -236,10 +235,7 @@ if __name__ == "__main__":
     frequencies = np.arange(f_min, f_max + 0.1, df)
 
     experiment = ResonatorSpectroscopy(
-        qubit=qubit,
-         frequencies=frequencies,
-          options=options,
-           config=config
+        qubit=qubit, frequencies=frequencies, options=options, config=config
     )
 
     experiment.run()

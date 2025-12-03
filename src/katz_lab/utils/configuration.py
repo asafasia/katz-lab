@@ -21,14 +21,12 @@ qubit_anharmonicity = qubit_args["qubit_anharmonicity"]
 
 qubit_LO = qubit_args["qubit_LO"]
 
-sweet_spot_flag = bool(qubit_args["sweet_spot_flag"])
+sweet_spot_flag = False
 
-qubit_freq = (
-    qubit_args["qubit_freq_sweet_spot"]
-    if sweet_spot_flag
-    else qubit_args["qubit_freq_zero_bias"]
-)
-flux_bias = qubit_args["flux_sweet_spot"] if sweet_spot_flag else 0
+qubit_freq = qubit_args["qubit_ge_freq"]
+
+
+flux_bias = 0
 qubit_IF = qubit_LO - qubit_freq
 qubit_ef_freq = qubit_freq + qubit_anharmonicity
 qubit_ef_IF = qubit_LO - qubit_ef_freq
@@ -207,7 +205,7 @@ gef_centers = resonator_args["gef_centers"]
 gef_covs = [np.array(cov_mat) for cov_mat in resonator_args["gef_covariance_mats"]]
 ringdown_length = 0
 
-opt_weights = True
+opt_weights = False
 if opt_weights:
     from qualang_tools.config.integration_weights_tools import (
         convert_integration_weights,

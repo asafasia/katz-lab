@@ -28,6 +28,7 @@ class QubitSpectroscopy(BaseExperiment):
         self,
         qubit: str,
         frequencies: np.ndarray,
+        relative_amplitude: float = 1,
         options: OptionsQubitSpectroscopy = None,
         config: dict = None,
         qmm: QuantumMachinesManager = None,
@@ -36,7 +37,9 @@ class QubitSpectroscopy(BaseExperiment):
             options = OptionsQubitSpectroscopy()
         super().__init__(qubit=qubit, options=options, config=config, qmm=qmm)
 
-        self.frequencies = qubit_LO - frequencies
+        qubit_IF = qubit_LO - qubit_freq
+        self.frequencies = (qubit_IF + frequencies).astype(int)
+        self.relative_amplitude = relative_amplitude
 
     def define_program(self):
         with program() as qubit_spec:
@@ -52,7 +55,7 @@ class QubitSpectroscopy(BaseExperiment):
                     qubit_initialization(self.options.active_reset)
                     update_frequency("qubit", df)
                     play(
-                        "saturation",
+                        "saturation" * amp(self.relative_amplitude),
                         "qubit",
                         duration=self.qubit_params["saturation_pulse"]["length"] // 4,
                     )
@@ -84,33 +87,50 @@ class QubitSpectroscopy(BaseExperiment):
                 iteration, self.options.n_avg, start_time=results.get_start_time()
             )
 
-        results = dict()
-        results["state"] = state
-        results["I"] = I
-        results["Q"] = Q
+        data = dict()
+        data["states"] = state
+        data["I"] = I
+        data["Q"] = Q
+        data["freqs"] = -self.frequencies + qubit_LO
 
-        self.results = results
+        self.data = data
 
-        return results
+        return data
 
     def analyze_results(self):
-        pass
+
+        freqs = self.data["freqs"]
+        states = self.data["states"]
+        I = self.data["I"]
+        Q = self.data["Q"]
+
+        # find max freq
+        if self.options.state_discrimination:
+            max_freq = freqs[np.argmax(states)]
+        else:
+            max_freq = freqs[np.argmax(I)]
+
+        self.max_freq = max_freq
+
+        print(f"Max freq: {max_freq}")
 
     def plot_results(self):
 
+        freqs = self.frequencies - qubit_IF + qubit_freq
+
         plt.figure()
         if self.options.state_discrimination:
-            plt.plot(self.frequencies / 1e6, self.results["state"])
+            plt.plot(freqs / 1e6, self.data["states"])
             plt.xlabel("Frequency (MHz)")
             plt.ylabel("State")
         else:
 
             plt.subplot(211)
-            plt.plot(self.frequencies / 1e6, self.results["I"])
+            plt.plot(freqs / 1e6, self.data["I"])
             plt.xlabel("Frequency (MHz)")
             plt.ylabel("I")
             plt.subplot(212)
-            plt.plot(self.frequencies / 1e6, self.results["Q"])
+            plt.plot(freqs / 1e6, self.data["Q"])
             plt.xlabel("Frequency (MHz)")
             plt.ylabel("Q")
         plt.tight_layout()
@@ -128,17 +148,23 @@ if __name__ == "__main__":
 
     options = OptionsQubitSpectroscopy()
     options.state_discrimination = False
-    options.n_avg = 3
+    options.n_avg = 100
     options.active_reset = False
     options.simulate = False
 
-    span = 100e6
-    N = 11
-    frequencies = np.arange(-span / 2, span / 2, span // N)
+    span = 200e6
+    N = 101
+    frequencies = np.linspace(-span / 2, span / 2, N, dtype=int)
+
+    print(qubit_LO - frequencies)
+
+    relative_amplitude = 0.1
 
     experiment = QubitSpectroscopy(
         frequencies=frequencies,
         qubit=qubit,
         options=options,
+        relative_amplitude=relative_amplitude,
     )
+
     experiment.run()

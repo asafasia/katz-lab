@@ -16,8 +16,8 @@
                 1.0220001243597812
             ],
             "qubit_LO": 4500000000,
-            "qubit_ge_freq": 4487766205,
-            "qubit_ef_freq": 4214766205,
+            "qubit_ge_freq": 4406764310,
+            "qubit_ef_freq": 4406764310,
             "qubit_anharmonicity": -232349980,
             "sweet_spot_flag": 1,
             "qubit_freq_sweet_spot": 4414766205,
@@ -52,12 +52,12 @@
                 "drag_coef": 0.3971504
             },
             "saturation_pulse": {
-                "length": 10000,
-                "amplitude": 0.0401
+                "length": 100000,
+                "amplitude": 0.401
             },
             "T1": 45000.0,
             "T2": 12500.03,
-            "thermalization_time": 400000
+            "thermalization_time": 200000
         },
         "resonator": {
             "IQ_input": {
@@ -75,13 +75,13 @@
                 0.888500008293417
             ],
             "resonator_LO": 7610000000.0,
-            "resonator_freq": 7446346608.0,
-            "readout_pulse_length": 1000,
-            "readout_pulse_amplitude": 0.121,
+            "resonator_freq": 7585263527,
+            "readout_pulse_length": 3000,
+            "readout_pulse_amplitude": 0.0793896,
             "time_of_flight": 340,
             "smearing": 0,
-            "rotation_angle": 1116.7662043558478,
-            "threshold": 0.0017978484947952487,
+            "rotation_angle": 112.6,
+            "threshold": -1.250e-03,
             "fidelity_matrix": [
                 [
                     0.8736,
