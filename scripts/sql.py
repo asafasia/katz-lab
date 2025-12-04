@@ -1,32 +1,29 @@
 import sqlite3
 
-DB_PATH = "calibration.db"
+# 1. CONNECT (creates the file if it doesn't exist)
+conn = sqlite3.connect("example.db")
 
-schema = """
-CREATE TABLE IF NOT EXISTS qubits (
+# 2. CREATE A TABLE
+conn.execute(
+    """
+CREATE TABLE IF NOT EXISTS parameters (
     id INTEGER PRIMARY KEY,
-    name TEXT UNIQUE NOT NULL,
-    qpu_name TEXT NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS calibrations (
-    id INTEGER PRIMARY KEY,
-    qubit_id INTEGER NOT NULL,
-    kind TEXT NOT NULL,              -- e.g. 'readout', 'drive_freq', 'drag'
-    params_json TEXT NOT NULL,       -- JSON string with arbitrary parameters
-    created_at TEXT NOT NULL,        -- ISO timestamp
-    created_by TEXT,                 -- your username
-    git_hash TEXT,                   -- optional for traceability
-    FOREIGN KEY (qubit_id) REFERENCES qubits(id)
-);
+    name TEXT,
+    value INTEGER
+)
 """
+)
 
-def main():
-    conn = sqlite3.connect(DB_PATH)
-    conn.executescript(schema)
-    conn.commit()
-    conn.close()
-    print(f"Initialized DB at {DB_PATH}")
+# 3. INSERT SOME DATA
+conn.execute("INSERT INTO people (name, age) VALUES (?, ?)", ("Alice", 30))
+conn.execute("INSERT INTO people (name, age) VALUES (?, ?)", ("Bob", 24))
 
-if __name__ == "__main__":
-    main()
+conn.commit()  # save changes
+
+# 4. READ THE DATA
+cursor = conn.execute("SELECT id, name, age FROM people")
+for row in cursor:
+    print(row)
+
+# 5. CLOSE
+conn.close()
