@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from qm import QuantumMachinesManager, SimulationConfig
 
 # from katz_lab.utils import DC
-from katz_lab.utils.configuration import (
+from katz_lab.config.configuration import (
     qubit_flux_bias_channel,
     flux_bias,
     qm_host,
@@ -10,7 +10,7 @@ from katz_lab.utils.configuration import (
 )
 
 from katz_lab.utils.options import Options
-from katz_lab.utils.configuration import *
+from katz_lab.config.configuration import *
 
 
 class BaseExperiment(ABC):

@@ -1,0 +1,6 @@
+name: katz_qpu
+controller: QM
+sample: device_2025_11a
+
+qubits:
+  - q10

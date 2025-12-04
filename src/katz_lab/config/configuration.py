@@ -3,7 +3,7 @@ from qualang_tools.units import unit
 from qualang_tools.config.waveform_tools import (
     drag_gaussian_pulse_waveforms,
 )
-from katz_lab.utils.config import *
+from katz_lab.config.config import *
 from katz_lab.utils.helper_functions import IQ_imbalance
 from katz_lab.library.pulses import generate_gaussian_pulse
 import numpy as np

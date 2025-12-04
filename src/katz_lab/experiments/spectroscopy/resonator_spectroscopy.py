@@ -9,7 +9,7 @@ from qualang_tools.loops import from_array
 
 
 from katz_lab.utils.configuration import *
-from katz_lab.experiments.base_experiment import BaseExperiment, Options
+from katz_lab.experiments.core.base_experiment import BaseExperiment, Options
 
 
 class OptionsResonatorSpectroscopy(Options):

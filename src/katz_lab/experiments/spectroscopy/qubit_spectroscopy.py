@@ -8,7 +8,7 @@ import numpy as np
 from qm.qua import *
 from qm import QuantumMachinesManager, SimulationConfig
 
-from katz_lab.experiments.base_experiment import BaseExperiment
+from katz_lab.experiments.core.base_experiment import BaseExperiment
 from katz_lab.utils.options import Options
 
 from katz_lab.utils.configuration import *

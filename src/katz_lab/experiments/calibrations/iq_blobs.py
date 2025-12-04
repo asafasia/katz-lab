@@ -7,7 +7,7 @@ from qualang_tools.results import fetching_tool, progress_counter
 
 from katz_lab.utils.macros import readout_macro, qubit_initialization
 
-from katz_lab.experiments.base_experiment import BaseExperiment, Options
+from katz_lab.experiments.core.base_experiment import BaseExperiment, Options
 
 from qualang_tools.analysis.discriminator import two_state_discriminator
 

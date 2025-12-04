@@ -1,5 +1,5 @@
 import json
-from katz_lab.utils.config import ARGS_PATH
+from katz_lab.config.config import ARGS_PATH
 
 
 class Params:

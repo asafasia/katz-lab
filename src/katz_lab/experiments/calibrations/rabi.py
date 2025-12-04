@@ -11,7 +11,7 @@ from katz_lab.utils.macros import readout_macro, qubit_initialization
 from qualang_tools.results import progress_counter, fetching_tool
 from qualang_tools.loops import from_array
 
-from katz_lab.experiments.base_experiment import BaseExperiment
+from katz_lab.experiments.core.base_experiment import BaseExperiment
 from katz_lab.utils.options import Options
 from katz_lab.utils.configuration import *
 

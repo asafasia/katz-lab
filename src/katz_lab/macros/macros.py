@@ -12,7 +12,7 @@ import numpy as np
 from qualang_tools.loops import from_array
 from sympy.strategies.branch import condition
 
-from katz_lab.utils.configuration import *
+from katz_lab.config.configuration import *
 
 
 ##############
