@@ -10,3 +10,4 @@ src/katz_lab/utils/__pycache__/helper_functions.cpython-311.pyc
 src/katz_lab/utils/__pycache__/macros.cpython-311.pyc
 src/katz_lab/utils/__pycache__/options.cpython-311.pyc
 src/katz_lab/experiments/__pycache__/base_experiment.cpython-39.pyc
+venv/
